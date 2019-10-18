@@ -9,6 +9,9 @@ public class Logic {
 	private Shape square;
 	private Shape circle;
 	private ArrayList<ColorBar> colorBars;
+	private String message;
+	private int messageRed;
+	private int messageGreen;
 	private PApplet app;
 
 	public Logic(PApplet app) {
@@ -25,6 +28,9 @@ public class Logic {
 		colorBars.add(new ColorBar(155, 1, 55, 450, 700, 50, 50, "Vino tinto"));
 		colorBars.add(new ColorBar(85, 35, 100, 500, 700, 50, 50, "Morado"));
 		colorBars.add(new ColorBar(20, 55, 0, 550, 700, 50, 50, "Verde oscuro"));
+		message = "";
+		messageRed = 255;
+		messageGreen = 0;
 		this.app = app;
 	}
 
@@ -66,17 +72,20 @@ public class Logic {
 			app.noStroke();
 			app.rectMode(PConstants.CORNER);
 			app.rect(posX, posY, w, h);
+
+			app.fill(255);
+			app.textSize(20);
+			app.noStroke();
+			app.text("Haz clic en una figura y luego en un color para cambiar.", app.width / 2 - 130, 670);
 		}
 	}
 
 	public void selectShape() {
 		float squareX = this.square.getPosX();
 		float squareY = this.square.getPosY();
-		// boolean selectSquare = this.square.isSelected();
 
 		float circleX = this.circle.getPosX();
 		float circleY = this.circle.getPosY();
-		// boolean selectCircle = this.circle.isSelected();
 
 		if (app.mouseX > squareX && app.mouseX < squareX + 100 && app.mouseY > squareY && app.mouseY < squareY + 100) {
 			this.square.setSelected(true);
@@ -152,22 +161,64 @@ public class Logic {
 			this.circle.setR(255);
 			this.circle.setG(255);
 			this.circle.setB(255);
-			
+
 			this.square.setNameColor("Vacío");
 			this.circle.setNameColor("Vacío");
+
+			this.message = "";
+		}
+	}
+
+	public void paintColorNullMessage() {
+		try {
+			nullColor();
+		} catch (Exception e) {
+			app.fill(255, 0, 0);
+			app.textSize(30);
+			app.text(e.getMessage(), app.width / 2, 100);
+		}
+	}
+
+	public void paintValidateColorMessage() {
+		app.textSize(30);
+		app.fill(messageRed, messageGreen, 0);
+		app.text(this.message, app.width / 2, 100);
+
+	}
+
+	public void nullColor() throws ColorNullException {
+		String colorSquare = this.square.getNameColor();
+		String colorCircle = this.circle.getNameColor();
+		if (colorSquare == "Vacío" || colorCircle == "Vacío") {
+			throw new ColorNullException("Una o ambas figuras no tienen color");
+		} else {
+
 		}
 	}
 
 	public void compareColor() throws ColorException {
 		String colorSquare = this.square.getNameColor();
 		String colorCircle = this.circle.getNameColor();
-		
-		if (app.mouseX > app.width / 2 - 50 && app.mouseX < app.width / 2 + 50 && app.mouseY > 200
-				&& app.mouseY < 240) {
-			if (this.square.getR() != this.circle.getR() || this.square.getG() != this.circle.getG()
-					|| this.square.getB() != this.circle.getB()) {
+
+		if (app.mouseX > app.width / 2 - 50 && app.mouseX < app.width / 2 + 50 && app.mouseY > 200 && app.mouseY < 240
+				&& app.mousePressed) {
+			if (colorSquare != colorCircle && colorSquare != "Vacío" && colorCircle != "Vacío") {
+				messageRed = 255;
+				messageGreen = 0;
 				throw new ColorException(colorSquare + " no coincide con " + colorCircle);
+			} else if (colorSquare == colorCircle && colorSquare != "Vacío" && colorCircle != "Vacío") {
+				messageRed = 0;
+				messageGreen = 255;
+				throw new ColorException(colorSquare + " coincide con " + colorCircle);
 			}
+		}
+	}
+
+	public void generateMessage() {
+		try {
+			compareColor();
+		} catch (Exception e) {
+			this.message = e.getMessage();
 		}
 	}
 }

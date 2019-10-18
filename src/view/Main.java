@@ -21,23 +21,18 @@ public class Main extends PApplet {
 	}
 
 	public void draw() {
-		//background(80, 80, 80);
+		background(80, 80, 80);
 		logic.paintShape();
 		logic.paintBarColor();
 		logic.paintButtons();
+		logic.paintColorNullMessage();
+		logic.paintValidateColorMessage();
 	}
 
 	public void mousePressed() {
 		logic.selectShape();
 		logic.changeColor();
 		logic.clearButton();
-		try {
-			logic.compareColor();
-		} catch (Exception e) {
-			background(80, 80, 80);
-			fill(255, 0, 0);
-			textSize(30);
-			text(e.getMessage(), width / 2, 100);
-		}
+		logic.generateMessage();
 	}
 }
