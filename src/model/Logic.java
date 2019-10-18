@@ -183,7 +183,6 @@ public class Logic {
 		app.textSize(30);
 		app.fill(messageRed, messageGreen, 0);
 		app.text(this.message, app.width / 2, 100);
-
 	}
 
 	public void nullColor() throws ColorNullException {
